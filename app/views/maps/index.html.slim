@@ -73,7 +73,7 @@ coffee:
     $el = $clone if clone
 
     img_width_one_percent = $("img.map").width() / 100.0
-    img_height_one_percent = $("img.map").height() / 100.0 + 0.04
+    img_height_one_percent = $("img.map").height() / 100.0 + 0.03
     left = ((helper_offset.left - map_offset.left) / img_width_one_percent) + '%'
     top = ((helper_offset.top - map_offset.top) / img_height_one_percent) + '%'
     coords_el_id = "coords_" + image_name + "_#{$el.data('index')}"
@@ -89,7 +89,7 @@ coffee:
     if typeof $el.data('index') == 'undefined'
       $el.data('index', $('#map .overlay').length - 1)
     img_width_one_percent = $("img.map").width() / 100.0
-    img_height_one_percent = $("img.map").height() / 100.0 + 0.04
+    img_height_one_percent = $("img.map").height() / 100.0 + 0.03
     left = (left / img_width_one_percent) + '%'
     top = (top / img_height_one_percent) + '%'
     coords_el_id = "coords_text_#{$el.data('index')}"
