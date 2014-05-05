@@ -12,7 +12,7 @@
           = overlay.value.html_safe
         .handle
     - else
-      img.draggable-clone.overlay src="/assets/#{overlay.overlay_type}.png" style="position: absolute; left:#{overlay.left}; top:#{overlay.top};" data-index=index
+      img.draggable-clone.overlay src=image_path("#{overlay.overlay_type}.png") style="position: absolute; left:#{overlay.left}; top:#{overlay.top};" data-index=index
 
 
 = form_for MapOverlay.new do |f|
