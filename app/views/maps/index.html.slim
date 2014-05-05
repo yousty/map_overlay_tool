@@ -1,0 +1,37 @@
+
+#icons
+  - @icons.each do |icon|
+    = image_tag "#{icon}.png", class: 'draggable'
+
+#map
+  = image_tag "testmap.jpg", class: 'map'
+
+
+coffee:
+
+  $(".draggable").draggable
+    helper: "clone"
+    zIndex: 100
+
+    stop: (event, ui) ->
+      img_width_one_percent = $("img.map").width() / 100.0
+      img_height_one_percent = $("img.map").height()/ 100.0 + 0.04
+      map_offset = $("#map").offset()
+      helper_offset = $(ui.helper).offset()
+      $clone = $(ui.helper).clone(true).removeClass('box ui-draggable ui-draggable-dragging').addClass('draggable-clone').appendTo('#map')
+      $clone.css('top', helper_offset.top - map_offset.top)
+      $clone.css('left', helper_offset.left - map_offset.left)
+      console.log( ((helper_offset.left - map_offset.left) / img_width_one_percent) + '%, ' + ((helper_offset.top - map_offset.top) / img_height_one_percent) + '%' )
+
+
+
+  $('body').on "mouseover", ".draggable-clone", ->
+    $(this).draggable
+      zIndex: 100
+
+      stop: (event, ui) ->
+        img_width_one_percent = $("img.map").width() / 100.0
+        img_height_one_percent = $("img.map").height() / 100.0 + 0.04
+        map_offset = $("#map").offset()
+        helper_offset = $(ui.helper).offset()
+        console.log( ((helper_offset.left - map_offset.left) / img_width_one_percent) + '%, ' + ((helper_offset.top - map_offset.top) / img_height_one_percent) + '%' )
