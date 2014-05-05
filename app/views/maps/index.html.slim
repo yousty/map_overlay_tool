@@ -13,7 +13,7 @@ coffee:
   update_coords = ($el, clone=false) ->
     map_offset = $("#map").offset()
     helper_offset = $($el).offset()
-    image_name = $el.attr('src').replace(/^.*[\\\/]/, '').replace(/\..*$/,'')
+    image_name = $el.attr('src').replace(/^.*[\\\/]/, '').replace(/\..*$/,'').replace(/-.{32}$/, '')   # remove path, filename, and asset pipeline checksum
 
     $clone = null
     if clone
