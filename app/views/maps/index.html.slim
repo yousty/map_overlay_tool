@@ -6,7 +6,12 @@
 #map
   = image_tag "testmap.jpg", class: 'map'
 
-#coords
+table#coords
+  tr.header
+    th= "Job ID"
+    th= "Type"
+    th= "Left"
+    th= "Top"
 
 coffee:
 
@@ -21,20 +26,43 @@ coffee:
       $clone.css('top', helper_offset.top - map_offset.top)
       $clone.css('left', helper_offset.left - map_offset.left)
       $clone.data('index', $(".draggable-clone[src*='#{image_name}']").length)
+      $clone.draggable
+        zIndex: 100
+        stop: (event, ui) ->
+          update_coords(ui.helper)
 
     $el = $clone if clone
+
     img_width_one_percent = $("img.map").width() / 100.0
     img_height_one_percent = $("img.map").height() / 100.0 + 0.04
     left = ((helper_offset.left - map_offset.left) / img_width_one_percent) + '%'
     top = ((helper_offset.top - map_offset.top) / img_height_one_percent) + '%'
     coords_el_id = "coords_" + image_name + "_#{$el.data('index')}"
+    $('#coords tr:eq(0)').show()  # show table header
     $coords = $("##{coords_el_id}")
     unless $coords.length > 0
-      $('#coords').append($("<div id='#{coords_el_id}'>"))
-      $coords = $("##{coords_el_id}")
-    $coords.text "#{image_name} #{$el.data('index')}: #{left}, #{top}"
+      $('#coords').append($("<tr id='#{coords_el_id}'><td><input type='text' value='' id='#{image_name}_#{$el.data('index')}_job_id'></td><td>#{image_name}</td><td></td><td></td></tr>"))
+    $coords_left = $("##{coords_el_id} td:eq(2)")
+    $coords_top = $("##{coords_el_id} td:eq(3)")
+    $coords_left.text left
+    $coords_top.text top
 
-    return { map_offset: map_offset, helper_offset: helper_offset, image_name: image_name }
+
+  update_text_coords = (left, top, $el) ->
+    $el.data('index', $('#map .overlay').length)
+    img_width_one_percent = $("img.map").width() / 100.0
+    img_height_one_percent = $("img.map").height() / 100.0 + 0.04
+    left = (left / img_width_one_percent) + '%'
+    top = (top / img_height_one_percent) + '%'
+    coords_el_id = "coords_text_#{$el.data('index')}"
+    $('#coords tr:eq(0)').show()  # show table header
+    $coords = $("##{coords_el_id}")
+    unless $coords.length > 0
+      $('#coords').append($("<tr id='#{coords_el_id}'><td><input type='text' value='' id='text_#{$el.data('index')}_job_id'></td><td>text</td><td></td><td></td></tr>"))
+    $coords_left = $("##{coords_el_id} td:eq(2)")
+    $coords_top = $("##{coords_el_id} td:eq(3)")
+    $coords_left.text left
+    $coords_top.text top
 
 
   $(".draggable").draggable
@@ -44,10 +72,35 @@ coffee:
     stop: (event, ui) ->
       update_coords(ui.helper, true)
 
+  just_edited = false
 
-  $('body').on "mouseover", ".draggable-clone", ->
-    $(this).draggable
+  $('html').click ->
+    just_edited = false
+
+  $('body').on 'click', '#map img', (e) ->
+    if just_edited
+      just_edited = false
+      return
+
+    left = e.clientX - $(this).offset().left
+    top = e.clientY - $(this).offset().top
+    $('#map').append($("<div class='overlay' style='position: absolute; left:#{left}px; top:#{top}px'><div class='text' contenteditable='true'></div><div class='handle'></div></div>"))
+    $text_overlay = $('#map .overlay:last')
+    update_text_coords left, top, $text_overlay
+
+    $text_overlay.draggable
       zIndex: 100
+      handle: ".handle"
 
       stop: (event, ui) ->
-        update_coords(ui.helper)
+        map_offset = $("#map").offset()
+        helper_offset = $(ui.helper).offset()
+        update_text_coords helper_offset.left - map_offset.left, helper_offset.top - map_offset.top, ui.helper
+
+  $('body').on 'click', "div[contenteditable='true']", ->
+    $(this).addClass('active')
+
+  $('body').on 'blur', "div[contenteditable='true']", ->
+    $(this).removeClass('active')
+    just_edited = true
+

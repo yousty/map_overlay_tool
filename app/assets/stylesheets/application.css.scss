@@ -36,4 +36,44 @@ img.draggable, img.draggable-clone{
   clear: both;
   margin-left: 59px;
   padding-top: 20px;
+
+  tr.header{
+    display: none;
+  }
+
+  th{
+    text-align: left;
+    font-weight: bold;
+    font-size: 0.9em;
+    padding-right: 15px;
+    padding-bottom: 7px;
+  }
+
+  td{
+    padding-right: 15px;
+  }
+
+  input[type='text']{
+    width: 40px;
+  }
+}
+
+.overlay{
+  min-width: 100px;
+  min-height: 20px;
+  .text{
+    border: 1px dashed #aaa;
+    padding: 3px;
+    font-size: 11px;
+  }
+  .handle{
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: orange;
+    cursor: move;
+    left: -15px;
+    top: 0;
+    position: absolute;
+  }
 }
