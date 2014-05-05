@@ -7,6 +7,8 @@ body{
   margin-left: auto;
   margin-right: auto;
   margin-top: 20px;
+  margin-bottom: 50px;
+  color: #333;
 }
 
 #icons{
@@ -22,24 +24,20 @@ img.draggable, img.draggable-clone{
 
 #map{
   position: relative;
-  margin: 0 20px;
+  margin-left: 20px;
   float: left;
-  width: 945px;
+  width: 965px;
 
   img.map{
     z-index: 0;
-    width: 885px;
+    width: 965px;
   }
 }
 
 #coords{
-  clear: both;
+  clear: none;
   margin-left: 59px;
   padding-top: 20px;
-
-  tr.header{
-    display: none;
-  }
 
   th{
     text-align: left;
@@ -58,7 +56,7 @@ img.draggable, img.draggable-clone{
   }
 }
 
-.overlay{
+.text_overlay{
   min-width: 100px;
   min-height: 20px;
   .text{
@@ -80,4 +78,18 @@ img.draggable, img.draggable-clone{
       opacity: 1;
     }
   }
+}
+
+input[type='submit']{
+  float: right;
+  font-size: 14px;
+  border: 1px solid #aaa;
+  min-width: 120px;
+  cursor: pointer;
+}
+
+#notice{
+  margin-left: 59px;
+  padding: 5px;
+  color: orange;
 }

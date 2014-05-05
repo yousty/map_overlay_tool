@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  map_name: MyString
+  left: MyString
+  top: MyString
+  string: MyString
+  object_id: MyString
+
+two:
+  map_name: MyString
+  left: MyString
+  top: MyString
+  string: MyString
+  object_id: MyString

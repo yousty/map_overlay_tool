@@ -3,17 +3,57 @@
   - @icons.each do |icon|
     = image_tag "#{icon}.png", class: 'draggable'
 
-#map
-  = image_tag "testmap.jpg", class: 'map'
+#map data-name=params[:map]
+  = image_tag "#{params[:map]}.jpg", class: 'map'
+  - @overlays.each_with_index do |overlay, index|
+    - if overlay.overlay_type == 'text'
+      .overlay.text_overlay.ui-draggable style="position: absolute; left:#{overlay.left}; top:#{overlay.top}" data-index=index
+        .text contenteditable="true"
+          = overlay.value.html_safe
+        .handle
+    - else
+      img.draggable-clone.overlay src="/assets/#{overlay.overlay_type}.png" style="position: absolute; left:#{overlay.left}; top:#{overlay.top};" data-index=index
 
-table#coords
-  tr.header
-    th= "Job ID"
-    th= "Type"
-    th= "Left"
-    th= "Top"
+
+= form_for MapOverlay.new do |f|
+  = f.submit "Save"
+  = f.submit "Clear", name: 'clear'
+  table#coords
+    tr.header style=("display: none;" unless @overlays.any?)
+      th= "Object ID"
+      th= "Type"
+    - @overlays.each_with_index do |overlay, index|
+      tr id=("coords_" + overlay.overlay_type + "_#{index}")
+        td
+          input type='text' value=overlay.object_id name='map_overlay[object_id][]'
+        td
+          = overlay.overlay_type
+          input type='hidden' value=overlay.overlay_type name='map_overlay[overlay_type][]'
+          input type='hidden' name='map_overlay[left][]' value=overlay.left
+          input type='hidden' name='map_overlay[top][]' value=overlay.top
+          input type='hidden' name='map_overlay[map_name][]' value=overlay.map_name
+          input type='hidden' name='map_overlay[value][]' value=overlay.value
+          input type='hidden' name='map_overlay[width][]' value=overlay.width
+
 
 coffee:
+
+  make_icon_overlay_draggable = ($overlay) ->
+    $overlay.draggable
+      zIndex: 100
+      stop: (event, ui) ->
+        update_coords(ui.helper)
+
+  make_text_overlay_draggable = ($overlay) ->
+    $overlay.draggable
+      zIndex: 100
+      handle: ".handle"
+
+      stop: (event, ui) ->
+        map_offset = $("#map").offset()
+        helper_offset = $(ui.helper).offset()
+        update_text_coords helper_offset.left - map_offset.left, helper_offset.top - map_offset.top, ui.helper
+
 
   update_coords = ($el, clone=false) ->
     map_offset = $("#map").offset()
@@ -22,14 +62,11 @@ coffee:
 
     $clone = null
     if clone
-      $clone = $($el).clone(true).removeClass('box ui-draggable ui-draggable-dragging').addClass('draggable-clone').appendTo('#map')
+      $clone = $($el).clone(true).removeClass('box ui-draggable ui-draggable-dragging').addClass('draggable-clone overlay').appendTo('#map')
       $clone.css('top', helper_offset.top - map_offset.top)
       $clone.css('left', helper_offset.left - map_offset.left)
-      $clone.data('index', $(".draggable-clone[src*='#{image_name}']").length)
-      $clone.draggable
-        zIndex: 100
-        stop: (event, ui) ->
-          update_coords(ui.helper)
+      $clone.data('index', $('#map .overlay').length)
+      make_icon_overlay_draggable $clone
 
     $el = $clone if clone
 
@@ -41,15 +78,14 @@ coffee:
     $('#coords tr:eq(0)').show()  # show table header
     $coords = $("##{coords_el_id}")
     unless $coords.length > 0
-      $('#coords').append($("<tr id='#{coords_el_id}'><td><input type='text' value='' id='#{image_name}_#{$el.data('index')}_job_id'></td><td>#{image_name}</td><td></td><td></td></tr>"))
-    $coords_left = $("##{coords_el_id} td:eq(2)")
-    $coords_top = $("##{coords_el_id} td:eq(3)")
-    $coords_left.text left
-    $coords_top.text top
+      $('#coords').append($("<tr id='#{coords_el_id}'><td><input type='text' value='' name='map_overlay[object_id][]'></td><td>#{image_name}<input type='hidden' value='#{image_name}' name='map_overlay[overlay_type][]' /><input type='hidden' name='map_overlay[left][]'/><input type='hidden' name='map_overlay[top][]'/><input type='hidden' name='map_overlay[map_name][]' value='#{$('#map').data('name')}'/><input type='hidden' name='map_overlay[value][]'/><input type='hidden' name='map_overlay[width][]'/></td></tr>"))
+    $("##{coords_el_id} input:eq(2)").val(left)
+    $("##{coords_el_id} input:eq(3)").val(top)
 
 
   update_text_coords = (left, top, $el) ->
-    $el.data('index', $('#map .overlay').length)
+    if typeof $el.data('index') == 'undefined'
+      $el.data('index', $('#map .overlay').length - 1)
     img_width_one_percent = $("img.map").width() / 100.0
     img_height_one_percent = $("img.map").height() / 100.0 + 0.04
     left = (left / img_width_one_percent) + '%'
@@ -58,24 +94,13 @@ coffee:
     $('#coords tr:eq(0)').show()  # show table header
     $coords = $("##{coords_el_id}")
     unless $coords.length > 0
-      $('#coords').append($("<tr id='#{coords_el_id}'><td><input type='text' value='' id='text_#{$el.data('index')}_job_id'></td><td>text</td><td></td><td></td></tr>"))
-    $coords_left = $("##{coords_el_id} td:eq(2)")
-    $coords_top = $("##{coords_el_id} td:eq(3)")
-    $coords_left.text left
-    $coords_top.text top
-
-
-  $(".draggable").draggable
-    helper: "clone"
-    zIndex: 100
-
-    stop: (event, ui) ->
-      update_coords(ui.helper, true)
-
-  just_edited = false
+      $('#coords').append($("<tr id='#{coords_el_id}'><td><input type='text' value='' name='map_overlay[object_id][]'></td><td>text<input type='hidden' value='text' name='map_overlay[overlay_type][]' /><input type='hidden' name='map_overlay[left][]'/><input type='hidden' name='map_overlay[top][]'/><input type='hidden' name='map_overlay[map_name][]' value='#{$('#map').data('name')}'/><input type='hidden' name='map_overlay[value][]' value='#{$el.children('.text').html()}'/><input type='hidden' name='map_overlay[width][]'/></td></tr>"))
+    $("##{coords_el_id} input:eq(2)").val(left)
+    $("##{coords_el_id} input:eq(3)").val(top)
 
   $('html').click ->
     just_edited = false
+    true
 
   $('body').on 'click', '#map img', (e) ->
     if just_edited
@@ -84,18 +109,10 @@ coffee:
 
     left = e.clientX - $(this).offset().left
     top = e.clientY - $(this).offset().top
-    $('#map').append($("<div class='overlay' style='position: absolute; left:#{left}px; top:#{top}px'><div class='text' contenteditable='true'></div><div class='handle'></div></div>"))
+    $('#map').append($("<div class='overlay text_overlay' style='position: absolute; left:#{left}px; top:#{top}px'><div class='text' contenteditable='true'></div><div class='handle'></div></div>"))
     $text_overlay = $('#map .overlay:last')
     update_text_coords left, top, $text_overlay
-
-    $text_overlay.draggable
-      zIndex: 100
-      handle: ".handle"
-
-      stop: (event, ui) ->
-        map_offset = $("#map").offset()
-        helper_offset = $(ui.helper).offset()
-        update_text_coords helper_offset.left - map_offset.left, helper_offset.top - map_offset.top, ui.helper
+    make_text_overlay_draggable $text_overlay
 
   $('body').on 'click', "div[contenteditable='true']", ->
     $(this).addClass('active')
@@ -103,4 +120,26 @@ coffee:
   $('body').on 'blur', "div[contenteditable='true']", ->
     $(this).removeClass('active')
     just_edited = true
+
+  $('body').on 'input', "div[contenteditable='true']", ->
+    $this = $(this)
+    el_index = $this.parent().data('index')
+    $overlay_data_el = $("#coords_text_#{el_index} input[name='map_overlay[value][]']").val $this.html()
+    $overlay_data_el = $("#coords_text_#{el_index} input[name='map_overlay[width][]']").val $this.width()
+
+  jQuery ->
+    just_edited = false
+
+    $.each $(".text_overlay"), ->
+      make_text_overlay_draggable $(this)
+
+    $.each $(".draggable-clone"), ->
+      make_icon_overlay_draggable $(this)
+
+    $(".draggable").draggable
+      helper: "clone"
+      zIndex: 100
+
+      stop: (event, ui) ->
+        update_coords(ui.helper, true)
 
