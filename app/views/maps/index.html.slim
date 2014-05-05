@@ -38,6 +38,8 @@
 
 coffee:
 
+  just_edited = false
+
   make_icon_overlay_draggable = ($overlay) ->
     $overlay.draggable
       zIndex: 100
@@ -128,8 +130,6 @@ coffee:
     $overlay_data_el = $("#coords_text_#{el_index} input[name='map_overlay[width][]']").val $this.width()
 
   jQuery ->
-    just_edited = false
-
     $.each $(".text_overlay"), ->
       make_text_overlay_draggable $(this)
 
