@@ -6,23 +6,43 @@
 #map
   = image_tag "testmap.jpg", class: 'map'
 
+#coords
 
 coffee:
+
+  update_coords = ($el, clone=false) ->
+    map_offset = $("#map").offset()
+    helper_offset = $($el).offset()
+    image_name = $el.attr('src').replace(/^.*[\\\/]/, '').replace(/\..*$/,'')
+
+    $clone = null
+    if clone
+      $clone = $($el).clone(true).removeClass('box ui-draggable ui-draggable-dragging').addClass('draggable-clone').appendTo('#map')
+      $clone.css('top', helper_offset.top - map_offset.top)
+      $clone.css('left', helper_offset.left - map_offset.left)
+      $clone.data('index', $(".draggable-clone[src*='#{image_name}']").length)
+
+    $el = $clone if clone
+    img_width_one_percent = $("img.map").width() / 100.0
+    img_height_one_percent = $("img.map").height() / 100.0 + 0.04
+    left = ((helper_offset.left - map_offset.left) / img_width_one_percent) + '%'
+    top = ((helper_offset.top - map_offset.top) / img_height_one_percent) + '%'
+    coords_el_id = "coords_" + image_name + "_#{$el.data('index')}"
+    $coords = $("##{coords_el_id}")
+    unless $coords.length > 0
+      $('#coords').append($("<div id='#{coords_el_id}'>"))
+      $coords = $("##{coords_el_id}")
+    $coords.text "#{image_name} #{$el.data('index')}: #{left}, #{top}"
+
+    return { map_offset: map_offset, helper_offset: helper_offset, image_name: image_name }
+
 
   $(".draggable").draggable
     helper: "clone"
     zIndex: 100
 
     stop: (event, ui) ->
-      img_width_one_percent = $("img.map").width() / 100.0
-      img_height_one_percent = $("img.map").height()/ 100.0 + 0.04
-      map_offset = $("#map").offset()
-      helper_offset = $(ui.helper).offset()
-      $clone = $(ui.helper).clone(true).removeClass('box ui-draggable ui-draggable-dragging').addClass('draggable-clone').appendTo('#map')
-      $clone.css('top', helper_offset.top - map_offset.top)
-      $clone.css('left', helper_offset.left - map_offset.left)
-      console.log( ((helper_offset.left - map_offset.left) / img_width_one_percent) + '%, ' + ((helper_offset.top - map_offset.top) / img_height_one_percent) + '%' )
-
+      update_coords(ui.helper, true)
 
 
   $('body').on "mouseover", ".draggable-clone", ->
@@ -30,8 +50,4 @@ coffee:
       zIndex: 100
 
       stop: (event, ui) ->
-        img_width_one_percent = $("img.map").width() / 100.0
-        img_height_one_percent = $("img.map").height() / 100.0 + 0.04
-        map_offset = $("#map").offset()
-        helper_offset = $(ui.helper).offset()
-        console.log( ((helper_offset.left - map_offset.left) / img_width_one_percent) + '%, ' + ((helper_offset.top - map_offset.top) / img_height_one_percent) + '%' )
+        update_coords(ui.helper)

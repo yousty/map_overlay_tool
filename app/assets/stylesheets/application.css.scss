@@ -1,6 +1,7 @@
 @import 'jquery.ui.all';
 
 body{
+  font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
   box-sizing: border-box;
   width: 1024px;
   margin-left: auto;
@@ -23,10 +24,16 @@ img.draggable, img.draggable-clone{
   position: relative;
   margin: 0 20px;
   float: left;
-  width: 885px;
+  width: 945px;
 
   img.map{
     z-index: 0;
     width: 885px;
   }
+}
+
+#coords{
+  clear: both;
+  margin-left: 59px;
+  padding-top: 20px;
 }
