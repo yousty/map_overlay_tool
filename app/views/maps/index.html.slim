@@ -16,8 +16,6 @@
 
 
 = form_for MapOverlay.new do |f|
-  = f.submit "Save"
-  = f.submit "Clear", name: 'clear'
   table#coords
     tr.header style=("display: none;" unless @overlays.any?)
       th= "Object ID"
@@ -34,6 +32,10 @@
           input type='hidden' name='map_overlay[map_name][]' value=overlay.map_name
           input type='hidden' name='map_overlay[value][]' value=overlay.value
           input type='hidden' name='map_overlay[width][]' value=overlay.width
+  br
+  #submit_buttons style=("display: none;" unless @overlays.any?)
+    = f.submit "Save"
+    = f.submit "Clear", name: 'clear'
 
 
 coffee:
@@ -78,6 +80,7 @@ coffee:
     top = ((helper_offset.top - map_offset.top) / img_height_one_percent) + '%'
     coords_el_id = "coords_" + image_name + "_#{$el.data('index')}"
     $('#coords tr:eq(0)').show()  # show table header
+    $('#submit_buttons').show()  # show submit buttons
     $coords = $("##{coords_el_id}")
     unless $coords.length > 0
       $('#coords').append($("<tr id='#{coords_el_id}'><td><input type='text' value='' name='map_overlay[object_id][]'></td><td>#{image_name}<input type='hidden' value='#{image_name}' name='map_overlay[overlay_type][]' /><input type='hidden' name='map_overlay[left][]'/><input type='hidden' name='map_overlay[top][]'/><input type='hidden' name='map_overlay[map_name][]' value='#{$('#map').data('name')}'/><input type='hidden' name='map_overlay[value][]'/><input type='hidden' name='map_overlay[width][]'/></td></tr>"))
@@ -94,6 +97,7 @@ coffee:
     top = (top / img_height_one_percent) + '%'
     coords_el_id = "coords_text_#{$el.data('index')}"
     $('#coords tr:eq(0)').show()  # show table header
+    $('#submit_buttons').show()  # show submit buttons
     $coords = $("##{coords_el_id}")
     unless $coords.length > 0
       $('#coords').append($("<tr id='#{coords_el_id}'><td><input type='text' value='' name='map_overlay[object_id][]'></td><td>text<input type='hidden' value='text' name='map_overlay[overlay_type][]' /><input type='hidden' name='map_overlay[left][]'/><input type='hidden' name='map_overlay[top][]'/><input type='hidden' name='map_overlay[map_name][]' value='#{$('#map').data('name')}'/><input type='hidden' name='map_overlay[value][]' value='#{$el.children('.text').html()}'/><input type='hidden' name='map_overlay[width][]'/></td></tr>"))
@@ -128,6 +132,22 @@ coffee:
     el_index = $this.parent().data('index')
     $overlay_data_el = $("#coords_text_#{el_index} input[name='map_overlay[value][]']").val $this.html()
     $overlay_data_el = $("#coords_text_#{el_index} input[name='map_overlay[width][]']").val $this.width()
+
+  $('body').on 'mouseover', '#coords tr', ->
+    $this = $(this)
+    return if $this.hasClass('header')
+    overlay_index = $this.attr('id').match(/\d+/)[0]
+    $overlay = $('.overlay').filter ->
+      $(this).data("index") + '' == overlay_index
+    $overlay.addClass('hover')
+
+  $('body').on 'mouseout', '#coords tr', ->
+    $this = $(this)
+    return if $this.hasClass('header')
+    overlay_index = $this.attr('id').match(/\d+/)[0]
+    $overlay = $('.overlay').filter ->
+      $(this).data("index") + '' == overlay_index
+    $overlay.removeClass('hover')
 
   jQuery ->
     $.each $(".text_overlay"), ->

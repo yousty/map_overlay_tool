@@ -3,7 +3,7 @@
 body{
   font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
   box-sizing: border-box;
-  width: 1024px;
+  width: 1244px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 20px;
@@ -34,10 +34,14 @@ img.draggable, img.draggable-clone{
   }
 }
 
+#new_map_overlay{
+  float: left;
+  width: 200px;
+  margin-left: 20px;
+}
+
 #coords{
   clear: none;
-  margin-left: 59px;
-  padding-top: 20px;
 
   th{
     text-align: left;
@@ -54,6 +58,18 @@ img.draggable, img.draggable-clone{
   input[type='text']{
     width: 40px;
   }
+
+  tr:hover{
+    background-color: orange;
+  }
+
+  tr.header:hover{
+    background-color: transparent;
+  }
+}
+
+.overlay.hover{
+  background-color: orange;
 }
 
 .text_overlay{
@@ -81,7 +97,6 @@ img.draggable, img.draggable-clone{
 }
 
 input[type='submit']{
-  float: right;
   font-size: 14px;
   border: 1px solid #aaa;
   min-width: 120px;
