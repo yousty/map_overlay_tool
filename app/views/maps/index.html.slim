@@ -32,6 +32,9 @@
           input type='hidden' name='map_overlay[map_name][]' value=overlay.map_name
           input type='hidden' name='map_overlay[value][]' value=overlay.value
           input type='hidden' name='map_overlay[width][]' value=overlay.width
+        td
+          span.remove
+            = "x"
 
   #submit_buttons style=("display: none;" unless @overlays.any?)
     = f.submit "Save"
@@ -72,7 +75,7 @@ coffee:
       $clone = $($el).clone(true).removeClass('box ui-draggable ui-draggable-dragging').addClass('draggable-clone overlay').appendTo('#map')
       $clone.css('top', helper_offset.top - map_offset.top)
       $clone.css('left', helper_offset.left - map_offset.left)
-      $clone.data('index', $('#map .overlay').length)
+      $clone.data('index', $('#map .overlay').length - 1)
       make_icon_overlay_draggable $clone
 
     $el = $clone if clone
@@ -86,7 +89,7 @@ coffee:
     $('#submit_buttons').show()  # show submit buttons
     $coords = $("##{coords_el_id}")
     unless $coords.length > 0
-      $('#coords').append($("<tr id='#{coords_el_id}'><td><input type='text' value='' name='map_overlay[object_id][]'></td><td>#{image_name}<input type='hidden' value='#{image_name}' name='map_overlay[overlay_type][]' /><input type='hidden' name='map_overlay[left][]'/><input type='hidden' name='map_overlay[top][]'/><input type='hidden' name='map_overlay[map_name][]' value='#{$('#map').data('name')}'/><input type='hidden' name='map_overlay[value][]'/><input type='hidden' name='map_overlay[width][]'/></td></tr>"))
+      $('#coords').append($("<tr id='#{coords_el_id}'><td><input type='text' value='' name='map_overlay[object_id][]'></td><td>#{image_name}<input type='hidden' value='#{image_name}' name='map_overlay[overlay_type][]' /><input type='hidden' name='map_overlay[left][]'/><input type='hidden' name='map_overlay[top][]'/><input type='hidden' name='map_overlay[map_name][]' value='#{$('#map').data('name')}'/><input type='hidden' name='map_overlay[value][]'/><input type='hidden' name='map_overlay[width][]'/></td><td><span class='remove'>x</span></td></tr>"))
     $("##{coords_el_id} input:eq(2)").val(left)
     $("##{coords_el_id} input:eq(3)").val(top)
 
@@ -103,7 +106,7 @@ coffee:
     $('#submit_buttons').show()  # show submit buttons
     $coords = $("##{coords_el_id}")
     unless $coords.length > 0
-      $('#coords').append($("<tr id='#{coords_el_id}'><td><input type='text' value='' name='map_overlay[object_id][]'></td><td>text<input type='hidden' value='text' name='map_overlay[overlay_type][]' /><input type='hidden' name='map_overlay[left][]'/><input type='hidden' name='map_overlay[top][]'/><input type='hidden' name='map_overlay[map_name][]' value='#{$('#map').data('name')}'/><input type='hidden' name='map_overlay[value][]' value='#{$el.children('.text').html()}'/><input type='hidden' name='map_overlay[width][]'/></td></tr>"))
+      $('#coords').append($("<tr id='#{coords_el_id}'><td><input type='text' value='' name='map_overlay[object_id][]'></td><td>text<input type='hidden' value='text' name='map_overlay[overlay_type][]' /><input type='hidden' name='map_overlay[left][]'/><input type='hidden' name='map_overlay[top][]'/><input type='hidden' name='map_overlay[map_name][]' value='#{$('#map').data('name')}'/><input type='hidden' name='map_overlay[value][]' value='#{$el.children('.text').html()}'/><input type='hidden' name='map_overlay[width][]'/></td><td><span class='remove'>x</span></td></tr>"))
     $("##{coords_el_id} input:eq(2)").val(left)
     $("##{coords_el_id} input:eq(3)").val(top)
 
@@ -151,6 +154,17 @@ coffee:
     $overlay = $('.overlay').filter ->
       $(this).data("index") + '' == overlay_index
     $overlay.removeClass('hover')
+
+  $('body').on 'click', '.remove', ->
+    $row = $(this).parent().parent()
+    overlay_index = $row.attr('id').match(/\d+/)[0]
+    $overlay = $('.overlay').filter ->
+      $(this).data("index") + '' == overlay_index
+    $overlay.remove()
+    $row.remove()
+    if $('.overlay').length == 0
+      $('#coords tr:eq(0)').hide()  # hide table header
+      $('#submit_buttons').hide()  # hide submit buttons
 
   jQuery ->
     $.each $(".text_overlay"), ->
