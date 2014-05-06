@@ -32,10 +32,13 @@
           input type='hidden' name='map_overlay[map_name][]' value=overlay.map_name
           input type='hidden' name='map_overlay[value][]' value=overlay.value
           input type='hidden' name='map_overlay[width][]' value=overlay.width
-  br
+
   #submit_buttons style=("display: none;" unless @overlays.any?)
     = f.submit "Save"
     = f.submit "Clear", name: 'clear'
+
+  #notice
+    = flash[:notice]
 
 
 coffee:
