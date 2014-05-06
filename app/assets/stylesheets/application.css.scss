@@ -42,7 +42,7 @@ img.draggable, img.draggable-clone{
 
 #coords{
   clear: none;
-
+  border-collapse: collapse;
   th{
     text-align: left;
     font-weight: bold;
@@ -53,6 +53,7 @@ img.draggable, img.draggable-clone{
 
   td{
     padding-right: 15px;
+    padding-left: 3px;
   }
 
   input[type='text']{
