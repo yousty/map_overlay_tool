@@ -1,1 +1,3 @@
-json.array! @overlays, partial: 'overlay', as: :overlay
+json.set! params[:map] do
+  json.array! @overlays, partial: 'overlay', as: :overlay
+end
