@@ -1,0 +1,1 @@
+json.(overlay, :map_name, :left, :top, :object_id, :overlay_type, :value, :width)

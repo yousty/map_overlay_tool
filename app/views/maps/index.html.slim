@@ -39,6 +39,8 @@
   #submit_buttons style=("display: none;" unless @overlays.any?)
     = f.submit "Save"
     = f.submit "Clear", name: 'clear'
+    button onclick="window.location.href='/export'; return false"
+      = "Export"
 
   #notice
     = flash[:notice]

@@ -8,4 +8,9 @@ class MapsController < ApplicationController
     @overlays = MapOverlay.where(map_name: params[:map]).order('overlay_type')
   end
 
+  def export
+    params[:map] ||= "testmap"
+    @overlays = MapOverlay.where(map_name: params[:map]).order('overlay_type')
+  end
+
 end
