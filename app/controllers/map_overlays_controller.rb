@@ -10,7 +10,7 @@ class MapOverlaysController < ApplicationController
         MapOverlay.create!(attribs)
       end
     end
-    redirect_to root_path, notice: (params[:clear] ? 'Map cleared.' : 'Map saved.')
+    redirect_to root_path(map: MAPS.index(overlay_params[:map_name].first)), notice: (params[:clear] ? 'Map cleared.' : 'Map saved.')
   end
 
 end

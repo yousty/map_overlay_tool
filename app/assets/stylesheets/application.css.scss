@@ -11,14 +11,23 @@ body{
   color: #333;
 }
 
+h1{
+  float: left;
+  margin-top: 0;
+  margin-left: 20px;
+}
+
 #icons{
   float: left;
-  width: 39px;
+  width: 30px;
+  background-color: rgb(118, 146, 173);
+  padding: 5px;
+  padding-bottom: 0;
 }
 
 img.draggable, img.draggable-clone{
   cursor: move;
-  width: 39px;
+  width: 30px;
   margin-bottom: 10px;
 }
 
@@ -36,7 +45,7 @@ img.draggable, img.draggable-clone{
 
 #new_map_overlay{
   float: left;
-  width: 200px;
+  width: 199px;
   margin-left: 20px;
 }
 
@@ -79,7 +88,10 @@ img.draggable, img.draggable-clone{
   .text{
     border: 1px dashed #aaa;
     padding: 3px;
-    font-size: 11px;
+    font-size: 20px;    /* old */
+    font-size: 2.6vm;   /* IE9 */
+    font-size: 2.6vmin;
+    color: white;
   }
   .handle{
     width: 10px;

@@ -3,8 +3,8 @@
   - @icons.each do |icon|
     = image_tag "#{icon}.png", class: 'draggable'
 
-#map data-name=params[:map]
-  = image_tag "#{params[:map]}.jpg", class: 'map'
+#map data-name=@map
+  = image_tag "maps/#{@map}.png", class: 'map'
   - @overlays.each_with_index do |overlay, index|
     - if overlay.overlay_type == 'text'
       .overlay.text_overlay.ui-draggable style="position: absolute; left:#{overlay.left}; top:#{overlay.top}" data-index=index
@@ -14,7 +14,7 @@
     - else
       img.draggable-clone.overlay src=image_path("#{overlay.overlay_type}.png") style="position: absolute; left:#{overlay.left}; top:#{overlay.top};" data-index=index
 
-
+h1= @map.sub('map-','')
 = form_for MapOverlay.new do |f|
   table#coords
     tr.header style=("display: none;" unless @overlays.any?)
@@ -39,11 +39,19 @@
   #submit_buttons style=("display: none;" unless @overlays.any?)
     = f.submit "Save"
     = f.submit "Clear", name: 'clear'
-    button onclick="window.location.href='/export'; return false"
+    button onclick="window.location.href='/export?map=#{params[:map]}'; return false"
       = "Export"
 
   #notice
     = flash[:notice]
+
+  #prev_next_map
+    - if params[:map].to_i > 0
+      button onclick="window.location.href='/?map=#{params[:map].to_i-1}'; return false"
+        = "< Previous"
+    - if params[:map].to_i < MAPS.count - 1
+      button onclick="window.location.href='/?map=#{params[:map].to_i+1}'; return false"
+        = "Next >"
 
 
 coffee:

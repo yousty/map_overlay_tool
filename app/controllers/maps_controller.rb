@@ -2,15 +2,24 @@ class MapsController < ApplicationController
 
   http_basic_authenticate_with name: "yousty", password: "yousty"
 
+  before_action :load_map
+
   def index
-    params[:map] ||= "testmap"
-    @icons = ['fav','check', 'arrow']
-    @overlays = MapOverlay.where(map_name: params[:map]).order('overlay_type')
+    @icons = ['fav_map','info','arrow']
+    @overlays = MapOverlay.where(map_name: @map).order('overlay_type')
   end
 
   def export
-    params[:map] ||= "testmap"
-    @overlays = MapOverlay.where(map_name: params[:map]).order('overlay_type')
+    @overlays = MapOverlay.where(map_name: @map).order('overlay_type')
+  end
+
+
+  private
+
+
+  def load_map
+    params[:map] ||= 0
+    @map = MAPS[params[:map].to_i]
   end
 
 end
