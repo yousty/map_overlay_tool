@@ -5,7 +5,7 @@ class MapsController < ApplicationController
   before_action :load_map
 
   def index
-    @icons = ['fav_map','info','arrow']
+    @icons = ['fav_map','info','arrow','restaurant']
     @overlays = MapOverlay.where(map_name: @map).order('overlay_type')
   end
 

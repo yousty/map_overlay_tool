@@ -38,8 +38,8 @@ h1= @map.sub('map-','')
 
   #submit_buttons style=("display: none;" unless @overlays.any?)
     = f.submit "Save"
-    = f.submit "Clear", name: 'clear'
-    button onclick="window.location.href='/export?map=#{params[:map]}'; return false"
+    = f.submit "Clear", name: 'clear', onclick: "return confirm('Clear map?')"
+    button onclick="if (confirm('Did you save your map? Changes are lost when exporting.')) window.location.href='/export?map=#{params[:map]}'; return false"
       = "Export"
 
   #notice

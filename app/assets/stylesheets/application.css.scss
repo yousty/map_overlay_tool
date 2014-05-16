@@ -89,8 +89,9 @@ img.draggable, img.draggable-clone{
     border: 1px dashed #aaa;
     padding: 3px;
     font-size: 16px;    /* old */
-    font-size: 2.1vm;   /* IE9 */
-    font-size: 2.1vmin;
+    // font-size: 2.1vm;   /* IE9 */
+    // font-size: 2.1vmin;
+    // color: rgb(147,147,147);
     color: white;
   }
   .handle{
